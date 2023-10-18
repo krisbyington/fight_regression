@@ -2,6 +2,7 @@ import os
 import sys
 import re
 import json
+import random
 import pandas as pd
 
 #to test json format correctness 
@@ -26,19 +27,19 @@ def getWeightString(weight):
     try:
         if int(weight) < 125:
             return "Strawweight"
-        elif int(weight) >=126 and weight < 135:
+        elif int(weight) >=125 and weight < 135:
             return "Flyweight"
-        elif int(weight) >=136 and weight < 145:
+        elif int(weight) >=135 and weight < 145:
             return "Bantamweight"
-        elif int(weight) >=146 and weight < 155:
+        elif int(weight) >=145 and weight < 155:
             return "Featherweight"
-        elif int(weight) >=156 and weight < 170:
+        elif int(weight) >=155 and weight < 170:
             return "Lightweight"
-        elif int(weight) >=171 and weight < 185:
+        elif int(weight) >=170 and weight < 185:
             return "Welterweight"
-        elif int(weight) >=186 and weight < 200:
+        elif int(weight) >=185 and weight < 200:
             return "Middleweight"
-        elif int(weight) >=201 and weight < 206:
+        elif int(weight) >=200 and weight < 206:
             return "Light Heavyweight"
         elif int(weight) >=206 :
             return "Heavyweight" 
@@ -87,6 +88,11 @@ def makeModelData(division,fighters, bouts):
                     fighter2 = fighter
                     found2 = True
             if found1 and found2:
+                numeric_winner = 2
+                if winner == fighter1["name"]:
+                    numeric_winner = int(0)
+                if winner == fighter2["name"]:
+                    numeric_winner = int(1)
                 combinedData.append(
                     {
                     "name"    : fighter1["name"],
@@ -163,75 +169,24 @@ def makeModelData(division,fighters, bouts):
                     "tdDef1"  : fighter2["tdDef"],
                     "subAvg1" : fighter2["subAvg"],
                     "ctrlAvg1": fighter2["ctrlAvg"],
-                    "winner"  : winner
+                    "winner"  : numeric_winner
                     }
                 )
-    print("length",len(combinedData ))
+    #print("length/ makemodelData",len(combinedData ))
     data.update({division:combinedData})
     return  data 
-    # "name"   : fighter["name"],
-    # "wins"   : winPercent(fighter["win"], fighter["loss"], fighter["draw"]),
-    # "tko"    : tkoPercent(fighter["tko"], fighter["win"], fighter["loss"], fighter["draw"]),
-    # "udec"   : udecPercent(fighter["udec"], fighter["win"], fighter["loss"], fighter["draw"]),
-    # "sdec"   : sdecPercent(fighter["sdec"], fighter["win"], fighter["loss"], fighter["draw"]),
-    # "sub"    : subPercent(fighter["sub"], fighter["win"], fighter["loss"], fighter["draw"]),
-    # "height" : fighter["height"],
-    # "reach"  : fighter["reach"],
-    # "dob"    : fighter["dob"],
-    # "slpm"   : fighter["slpm"],
-    # "strAcc" : fighter["strAcc"],
-    # "sapm"   : fighter["sapm"],
-    # "strDef" : fighter["strDef"],
-    # "tdAvg"  : fighter["tdAvg"],
-    # "tdAcc"  : fighter["tdAcc"],
-    # "tdDef"  : fighter["tdDef"],
-    # "subAvg" : fighter["subAvg"],
-    # "name1"  : fighter2["name"],
-    # "wins1"  : winPercent(fighter2["win"], fighter2["loss"], fighter2["draw"]),
-    # "tko1"   : tkoPercent(fighter2["tko"], fighter2["win"], fighter2["loss"], fighter2["draw"]),
-    # "udec1"  : udecPercent(fighter2["udec"], fighter2["win"], fighter2["loss"], fighter2["draw"]),
-    # "sdec1"  : sdecPercent(fighter2["sdec"], fighter2["win"], fighter2["loss"], fighter2["draw"]),
-    # "sub1"   : subPercent(fighter2["sub"], fighter2["win"], fighter2["loss"], fighter2["draw"]),
-    # "height1": fighter2["height"],
-    # "reach1" : fighter2["reach"],
-    # "dob1"   : fighter2["dob"],
-    # "slpm1"  : fighter2["slpm"],
-    # "sapm1"  : fighter2["sapm"],
-    # "strAcc1": fighter2["strAcc"],
-    # "strDef1": fighter2["strDef"],
-    # "tdAvg1" : fighter2["tdAvg"],
-    # "tdAcc1" : fighter2["tdAcc"],
-    # "tdDef1" : fighter2["tdDef"],
-    # "subAvg1": fighter2["subAvg"],
-    # "winner" : winner
+    
         
 def makePredictData(division,fighters):
     data = {}
     combinedData = []
     for fighter in fighters:
                                 #was weight 
+        # print(fighter["weight"])
+        # print(getWeightString(fighter["weight"]))
+        # if getWeightString(fighter["weight"]) is not None:
+        #     print(getWeightString(fighter["weight"]))
         if(getWeightString(fighter["weight"]) == division):
-            # combinedData.append(
-            #     {
-            #         "name"   : fighter["name"],
-            #         "wins"   : winPercent(fighter["win"], fighter["loss"], fighter["draw"]),
-            #         "tko"    : tkoPercent(fighter["tko"], fighter["win"], fighter["loss"], fighter["draw"]),
-            #         "udec"   : udecPercent(fighter["udec"], fighter["win"], fighter["loss"], fighter["draw"]),
-            #         "sdec"   : sdecPercent(fighter["sdec"], fighter["win"], fighter["loss"], fighter["draw"]),
-            #         "sub"    : subPercent(fighter["sub"], fighter["win"], fighter["loss"], fighter["draw"]),
-            #         "height" : fighter["height"],
-            #         "reach"  : fighter["reach"],
-            #         "dob"    : fighter["dob"],
-            #         "slpm"   : fighter["slpm"],
-            #         "strAcc" : fighter["strAcc"],
-            #         "sapm"   : fighter["sapm"],
-            #         "strDef" : fighter["strDef"],
-            #         "tdAvg"  : fighter["tdAvg"],
-            #         "tdAcc"  : fighter["tdAcc"],
-            #         "tdDef"  : fighter["tdDef"],
-            #         "subAvg" : fighter["subAvg"],
-            #     }
-            # )
             combinedData.append({
                     "name"   : fighter["name"],
                     "wins"   : fighter["wins"],
@@ -271,12 +226,11 @@ def makePredictData(division,fighters):
                     "subAvg" : fighter["subAvg"],
                     "ctrlAvg" : fighter["ctrlAvg"]
                 })
-    print("length", len(combinedData ))
+    #print("length/predict", len(combinedData ))
     data.update({division:combinedData})
     return  data   
 
 def saveWeightClasses(classList, dataList, modelData):
-    # need to make macine agnostic slashes. 
     if len(classList) != len(dataList):
         ### should this be a try/except? 
         print("error saving all weight classes: check list lengths")
@@ -285,7 +239,6 @@ def saveWeightClasses(classList, dataList, modelData):
         for i in range(0, len(classList)):
             #remember to change data1 -> data2 if not compatable anymore
             fileName = os.path.join(os.path.expanduser("modelData"),classList[i] + "Data1.json")
-            print(fileName)
             with open(fileName, 'w') as d:
                 d.write(json.dumps(dataList[i]))
     else:
@@ -302,7 +255,7 @@ def saveWeightClasses(classList, dataList, modelData):
                 # run a for loop to combine into one list 
                 
                 fileName = os.path.join(os.path.expanduser("predictData") ,"ST-FL-B-" + "Data1.json")
-                print(fileName)
+                #print(fileName)
                 with open(fileName, 'w') as d:
                     d.write(json.dumps(dump))
         temp = []
@@ -327,7 +280,7 @@ def saveWeightClasses(classList, dataList, modelData):
                 temp.append(dataList[i]["Middleweight"])
                 dump = mergeLists(temp)
                 fileName = os.path.join(os.path.expanduser("predictData") ,"W-M-" + "Data1.json")
-                print(fileName)
+                #print(fileName)
                 with open(fileName, 'w') as d:
                     d.write(json.dumps(dump))
         temp = []
@@ -339,7 +292,7 @@ def saveWeightClasses(classList, dataList, modelData):
                 temp.append(dataList[i]["Heavyweight"])
                 dump = mergeLists(temp)
                 fileName = os.path.join(os.path.expanduser("predictData") ,"LH-H-" + "Data1.json")
-                print(fileName)
+                #print(fileName)
                 with open(fileName, 'w') as d:
                     d.write(json.dumps(dump))
                 
@@ -352,7 +305,7 @@ def mergeLists(list):
             result.append(ob)
     return result
 
-def makePredictAll(fighters,divisions):
+def makeLargeJson(dataList):
     temp = []
     dump = []
     for i in range(0,9):
@@ -375,11 +328,9 @@ def makePredictAll(fighters,divisions):
         if i == 8:
             temp.append(dataList[i]["Heavyweight"])    
             dump = mergeLists(temp)
+    return dump
             
-            fileName = os.path.join(os.path.expanduser("predictAll"), "Data1.json")
-            print(fileName)
-            with open(fileName, 'w') as d:
-                d.write(json.dumps(dump))
+
 
 def prepFighterData(fighters, bouts):
     # returns a list of complete and a list of incomplete data 
@@ -581,11 +532,11 @@ divisions = [
              ]
 
 ##### Control Panel #######################################
-firstClean = False # first for a new batch
+firstClean = True # first for a new batch
 
-modelData = False
-predictData = False
-predictAllData = False
+modelData = True
+predictByWeight = True
+predictLarge = True
 # make a split labeled by parameter numbers 32 or 64 or whatev
 # then make it so that you use the newer one
 # I still want to finish getting a sample from the first model 
@@ -610,6 +561,7 @@ if(modelData):
     # reression has function to combine for large training 
     # regression has function to combine for weight grouping 
     # ALL training data derived from this
+    print("modelData")
     with open(os.path.expanduser("calculated_fighters.json"), 'r') as d:
         fighters = json.load(d) 
 
@@ -619,8 +571,18 @@ if(modelData):
     for div in divisions:
         dataList.append(makeModelData(div, fighters, bouts))
     saveWeightClasses(divisions, dataList, modelData)
+    # for some reason makeLargeJson uses datalist as a global 
+    large_json = makeLargeJson(dataList)
+    dataList = []
+    fileName = os.path.join(os.path.expanduser("modelData"), "modelLarge.json")
+    print(fileName)
+    print(len(large_json))
+    with open(fileName, 'w') as d:
+        d.write(json.dumps(large_json))
+    
 
-if(predictData):
+if(predictByWeight):
+    print("predict by weight")
     # I think its weightModel predict data 
     with open(os.path.expanduser("calculated_fighters.json"), 'r') as d:
         fighters = json.load(d) 
@@ -631,8 +593,10 @@ if(predictData):
     for div in divisions:
         dataList.append(makePredictData(div, fighters))
     saveWeightClasses(divisions, dataList, modelData)
+    dataList = []
     
-if(predictAllData):
+if(predictLarge):
+    print("predict large")
     # I think its LargeModel predict data
     with open(os.path.expanduser("calculated_fighters.json"), 'r') as d:
         fighters = json.load(d) 
@@ -643,7 +607,12 @@ if(predictAllData):
     for div in divisions:
         dataList.append(makePredictData(div, fighters))
     # change this to savePredicAll
-    makePredictAll(fighters, divisions)
+    large_json = makeLargeJson(dataList)
+    fileName = os.path.join(os.path.expanduser("predictLarge"), "predictLarge.json")
+    print(fileName)
+    print(len(large_json))
+    with open(fileName, 'w') as d:
+        d.write(json.dumps(large_json))
 
 sys.exit()           
 

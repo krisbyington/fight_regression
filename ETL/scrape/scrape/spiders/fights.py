@@ -99,7 +99,7 @@ class FighterSpider2(CrawlSpider):
             }
         else:
             yield {
-            "winner": winner,
+            "winner": winner.strip(),
             "name1": nameList[1].strip(),
             "name2": nameList[0].strip(),
             "division": div,
